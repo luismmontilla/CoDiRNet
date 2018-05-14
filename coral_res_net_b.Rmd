@@ -1,0 +1,477 @@
+---
+title: "coral_net"
+author: "LMM", "AS"
+date: "25 de marzo de 2017"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+#1. Basics
+
+```{r packages & scripts}
+library(igraph)
+library(disparityfilter)
+library(cowplot)
+library(linkcomm)
+library(intergraph)
+library(GGally)
+library(ggrepel)
+library(viridis)
+library(ggnetwork)
+library(vegan)
+source("cmbDFrame.R")
+source("backbone2.R")
+#source("CVsplit.R")
+source("strenght_distribution.R")
+source("non_nested_height2.R")
+source("plotLinkCommMembers2.R")
+source("plotLinkCommGraph2.R")
+#devtools::install_github("thomasp85/patchwork", force=T)
+#library(patchwork) #this replaces cowplot
+```
+
+#2. Raw data
+
+```{r Data}
+rawnet <- read.csv("master_coral_dis_net.csv", sep = ",", na.strings = "",
+                   header = T, stringsAsFactors = F)
+coral.att <- read.csv("glossary.csv")
+```
+
+```{r, underscore to spaces}
+rawnet <- data.frame(lapply(rawnet, function(x) {
+  gsub("_", " ", x)
+  }
+  ), stringsAsFactors = F)
+
+coral.att <- data.frame(lapply(coral.att, function(x) {
+  gsub("_", " ", x)
+  }
+  ), stringsAsFactors = F)
+```
+
+
+
+
+#4. Coral diseases network
+
+La funcion coral.merge y coral.edges toman la matriz de enlaces por filas y la reordenan por combinaciones de dos elementos para dejar una tabla de enlaces
+
+```{r Edges list}
+coral.merge <- cmbDFrame(rawnet[,-(1:4)])
+coral.edges <- as.data.frame(coral.merge$mrgCCombs)
+```
+
+Ahora construimos la red y le definimos el atributo peso. Como el grafo no es simple, cada enlace tiene peso w = 1 y al simplificarlos, los pesos se suman
+
+```{r Main network}
+coral.graph <- graph.data.frame(coral.edges,directed = F)
+E(coral.graph)$weight <- rep(1,ecount(coral.graph))
+coral.graph <- simplify(coral.graph,
+                     edge.attr.comb=list(name="ignore",weight="sum"))
+is.simple(coral.graph)
+print(coral.graph)
+```
+
+##Verificacion
+
+```{r con respecto a red}
+#nodos de la red que no estan en la lista de atributos
+names(V(coral.graph))[!(tolower(names(V(coral.graph))) %in% tolower(as.character(coral.att$node)))]
+
+#nodos de la lista de atributos que no estan en la red
+tolower(as.character(coral.att$node))[!(tolower(as.character(coral.att$node)) %in% tolower(names(V(coral.graph))))]
+
+length(unique(tolower(as.character(coral.att$node)))) ## Hay 300 nodos en total segun el glosario
+length(unique(tolower(names(V(coral.graph))))) ## Segun la red, hay 300 nodos en total
+
+## 4 nodos repetidos en la red, estan escritos alguna vez con mayusculas y otras con minusculas
+tolower(names(V(coral.graph)))[duplicated(tolower(names(V(coral.graph))))] 
+
+```
+
+##Addition of attributes
+
+```{r attributes}
+glossary2 <- coral.att
+glossary2$node <- names(V(coral.graph))
+coral.att$node <- as.character(coral.att$node)
+for (i in 1:nrow(coral.att)) {
+  glossary2$attribute[i] <- coral.att$attribute[glossary2$node[i] == tolower(coral.att$node)] 
+}
+V(coral.graph)$type <- glossary2$attribute
+```
+
+##Backbone network
+
+Este segmento origina la columna de la red 
+
+```{r Backbone network}
+coral.backbone <- graph.data.frame(backbone2(coral.graph), 
+                                   directed = F)
+coral.backbone <- decompose.graph(coral.backbone)[[1]]
+is_simple(coral.backbone)
+coral.backbone <- simplify(coral.backbone, remove.multiple = T)
+```
+
+
+Veamos las propiedades de la red completa
+
+#5. Network properties
+##5.1 Basic properties
+
+```{r}
+V(coral.graph) #numero de nodos
+E(coral.graph) #numero de enlaces
+graph.density(coral.graph) #densidad de la red
+count_components(coral.graph) #numero de componentes conectados
+mean(igraph::degree(coral.graph)) #grado promedio
+mean(strength(coral.graph))
+```
+
+##5.2 Backbone properties
+
+```{r}
+V(coral.backbone) #numero de nodos
+E(coral.backbone) #numero de enlaces
+graph.density(coral.backbone) #densidad de la red
+count_components(coral.backbone) #numero de componentes
+mean(degree(coral.backbone)) #grado promedio
+mean(strength(coral.backbone))
+```
+
+
+
+##5.4 Distribucion de grado
+
+```{r distribuciones de fuerza por atributo}
+sd_att <- data.frame(a = glossary2$attribute , 
+                     b = names(strength(coral.graph)), 
+                     c =  strength(coral.graph),
+                     row.names = seq(1,nrow(glossary2)
+                                     )
+                     )
+```
+
+```{r distribucion de fuerza de enfermedades}
+plot_all <- ggplot(sd_att, aes(sd_att$c)) + 
+  geom_histogram(binwidth = 40) + xlab("Vertex strength") +
+  ylab("Frequency")
+```
+
+
+###5.4.1 Distribuciones particulares
+
+```{r distribucion de fuerza de enfermedades}
+sd_disease <- sd_att[sd_att$a=="disease",]
+plot_disease <- ggplot(sd_disease, aes(sd_disease$c)) +
+  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  ylab("Frequency")
+```
+
+```{r distribucion de fuerza de ecoregiones}
+sd_ecoregion <- sd_att[sd_att$a=="ecoregion",]
+plot_ecoregion <- ggplot(sd_ecoregion, aes(sd_ecoregion$c)) +
+  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  ylab("Frequency")
+```
+
+```{r distribucion de fuerza de generos}
+sd_genera <- sd_att[sd_att$a=="genera",]
+plot_genera <- ggplot(sd_genera, aes(sd_genera$c)) +
+  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  ylab("Frequency")
+```
+
+```{r strenght distribution by topic}
+sd_topic <- sd_att[sd_att$a=="topic",]
+plot_topic <- ggplot(sd_topic, aes(sd_topic$c)) +
+  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  ylab("Frequency")
+```
+
+
+
+```{r}
+fig01top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
+fig01mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
+fig01low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
+
+svg("fig01.svg", width = 5)
+plot_grid(fig01top, fig01mid, fig01low,  nrow = 3, align = "hv", 
+          rel_widths = c(1, 1, 0.1)) #+ 
+  #draw_label("DRAFT!", angle = 45, size = 80, alpha = .2)
+dev.off()
+```
+
+
+#6. Top topics
+
+```{r}
+ecoregions <- tolower(coral.att$node[coral.att$attribute == "ecoregion"])
+diseases <- tolower(coral.att$node[coral.att$attribute == "disease"])
+genus <- tolower(coral.att$node[coral.att$attribute == "genera"])
+topics <- tolower(coral.att$node[coral.att$attribute == "topic"])
+```
+
+```{r datos necesarios}
+ls_ecoregions <- list()
+ls_diseases   <- list()
+ls_genus      <- list()
+ls_topic      <- list()
+
+for(i in 1:nrow(rawnet)) {
+  ls_ecoregions[[i]] <- rawnet[i, ][which(tolower(rawnet[i, ]) %in% ecoregions)]
+  ls_diseases[[i]]   <- rawnet[i, ][which(tolower(rawnet[i, ]) %in% diseases)]
+  ls_genus[[i]]      <- rawnet[i, ][which(tolower(rawnet[i, ]) %in% genus)]
+  ls_topic[[i]]      <- rawnet[i, ][which(tolower(rawnet[i, ]) %in% topics)]
+}
+
+#number of papers by ecoregions
+ecor_freq <- table(as.vector(t(do.call(cbind, ls_ecoregions)[1, ])))
+#number of papers by diseases
+enfe_freq <- table(as.vector(t(do.call(cbind, ls_diseases)[1, ])))
+#number of papers by genera
+gene_freq <- table(as.vector(t(do.call(cbind, ls_genus)[1, ])))
+#number of papers by topic
+topic_freq <- table(as.vector(t(do.call(cbind, ls_topic)[1, ])))
+```
+
+
+```{r top studied elements}
+sum(tail(sort((ecor_freq*100/848)), 5))
+sum(tail(sort((enfe_freq*100/848)), 6)[1:5])
+sum(tail(sort((gene_freq*100/848)), 6)[1:5])
+sum(tail(sort((topic_freq*100/848)), 6)[1:5])
+```
+
+```{r}
+head(sort(ecor_freq, decreasing = T), 5)
+head(sort(enfe_freq, decreasing = T), 6)
+head(sort(gene_freq, decreasing = T), 6)
+head(sort(topic_freq, decreasing = T), 5)
+```
+
+
+#7. Communities detection: edges communities
+
+
+```{r link communities}
+raw.link.com <- as.data.frame(cbind(get.edgelist(coral.backbone), 
+                      E(coral.backbone)$weight))
+colnames(raw.link.com) <- c("source","target","weight")
+raw.link.com$weight <- as.numeric(as.character(raw.link.com$weight))
+lc <- getLinkCommunities(raw.link.com)
+```
+
+
+```{r}
+raw.link.com.id <- as.data.frame(cbind(get.edgelist(coral.backbone, names = F), 
+                      E(coral.backbone)$weight))
+colnames(raw.link.com.id) <- c("source","target","weight")
+write.csv(raw.link.com, "coral.backbone.csv", row.names = F) #write edge list
+write.csv(raw.link.com.id, "coral.backbone.id.csv", row.names = F) #write edge list
+```
+
+
+Now we analyze the relatedness between communities and determine possible metacommunities or adjustments in the cut value
+
+```{r refining the communities}
+cr <- getClusterRelatedness(lc) #closeness between communities
+nested_comm <- getAllNestedComm(lc) #nested communities
+#getNodesIn(lc, clusterids = c(18)) #membership of communities
+```
+
+```{r}
+new_cut <- getMaxden(lc)
+```
+
+```{r recut}
+lc2 <- (newLinkCommsAt(lc, cutat = new_cut[1])) # 11 comm, 0 nested
+lc2$clustsizes
+#write.csv(lc$nodeclusters, "node_membership.csv", row.names = F) #write node membership
+#getNodesIn(lc2, clusterids = 1)
+```
+
+
+```{r community membership plot}
+svg(filename="comm_membership.svg")
+#win.metafile(filename="cairo", antialias="default")
+comm.palette <- viridis_pal(option = "inferno")(lc2$numbers[3])
+plotLinkCommMembers2(lc2, nodes = head(names(lc2$numclusters), 90),
+                    pal = comm.palette,
+                    total = T, fontsize = 6, sigmafont = 4, comfont = 5, sumfont = 4,
+                    maxclusters = lc2$numbers[3], title = F, nspace = 5)
+dev.off()
+```
+
+
+
+```{r external membership plot}
+mmbr_matrix <- getCommunityMatrix(lc2, nodes = names(lc2$numclusters))
+rownames(mmbr_matrix) <- names(lc2$numclusters)
+write.csv(lc2$numclusters, file = "ext_nodes.csv")
+write.csv(mmbr_matrix, file = "ext_members.csv")
+```
+
+now we can recheck the relatedness
+
+```{r comm similarity}
+#svg(filename="fig02C.svg")
+cr2 <- getClusterRelatedness(lc2, hcmethod = "complete") #dissmililarity #between communities
+cr2$height <- 100*cr2$height
+#cr2$height <- 100-cr2$height
+plot(cr2, main="", sub="", xlab="Communities", ylab="Similarity (%)", axes=F)
+#axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
+axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
+#dev.off()
+```
+
+```{r jaccard similarity matrix}
+cr2.matrix <- getClusterRelatedness(lc2, cluster = F) #Jaccard disimilarity
+cr2.matrix <- 100*(1-cr2.matrix) #as % of Similarity
+```
+
+
+```{r simmilarity data}
+comm.matrix <- getCommunityMatrix(lc2, nodes = head(names(lc2$numclusters), lc2$numbers[2]))
+comm.matrix <- t(comm.matrix)
+comm.jacc <- vegdist(comm.matrix,method = "jaccard", binary = T)
+comm.jacc <- (1-comm.jacc)
+comm.jacc <- as.matrix(comm.jacc)
+comm.graph <- graph_from_adjacency_matrix(comm.jacc, mode = "lower", diag = F, weighted = T, 
+                                          add.rownames = T)
+E(comm.graph)$weight2 <- E(comm.graph)$weight*10
+V(comm.graph)$sizes <- c(3, 3, 3, 5, 12, 4, 9, 22, 6, 37, 36)
+V(comm.graph)$name <- c("C1", "C2", "C3", "C4", "C5", "C6",
+                        "C7", "C8", "C9", "C10", "C11")
+```
+
+
+```{r figure02A-comm similarity graph}
+#svg(filename="fig02A.svg")
+comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
+       aes(x, y, xend = xend, yend = yend)) +
+  geom_edges(aes(color = weight2, size = weight2*10)) +
+  geom_nodes(aes(size = sizes**1.5), color = "black", fill = "black") +
+  scale_color_gradient(low = "blue", high = "black") +
+  geom_nodetext_repel(aes(label = vertex.names),
+                      nudge_x = c(rep(0.05,6),rep(-0.05,5))) +
+  scale_size_continuous(name = "Community\nsize",
+                        breaks = 1.5*c(3, 9, 12, 22, 37),
+                        labels = c("3", "9", "12", "22", "37"),
+                        guide = guide_legend(override.aes = list(
+                          linetype = c(rep(0, 5)))
+                        )) +
+  scale_color_continuous(name = "Shared nodes",
+                         breaks = c(3/10, 7/10, 12/10, 17/10),
+                         labels = c("3%", "7%", "12%", "17%"),
+                         trans = "reverse") + theme_blank()
+#dev.off()
+```
+
+
+```{r figure02B}
+table_cnct <- as.data.frame(getCommunityConnectedness(lc2))
+colnames(table_cnct) <- "Connectedness"
+table_cnct$Community <- seq(1:lc2$numbers[3])
+plot_cnct <- ggplot(table_cnct, aes(x = Community, y = Connectedness))+
+  geom_bar(stat = "identity", col="black", fill = "steelblue") +
+  scale_x_discrete(name = "Communities",
+                   limits = seq(1:lc2$numbers[3]),
+                   labels = c("C1", "C2", "C3", "C4", "C5", "C6",
+                              "C7", "C8", "C9", "C10", "C11")) +
+  ylab("Connectedness") + theme(axis.text=element_text(size = 10, angle = 90))
+plot_cnct
+```
+
+
+```{r fig02 composed}
+svg(filename = "fig02.svg", width = 8.5, height = 4)
+plot_grid(comm_graph, plot_cnct, ncol = 2, labels = c("A", "B"), 
+          rel_widths = c(1,0.7), label_size = 20)
+dev.off()
+```
+
+
+#08. individual community plots
+
+Each graph are assigned to a g.comm# where "#" is the number of the community
+
+```{r, individual community plots}
+for(i in 1:length(levels(lc2$edges$cluster))) {
+  assign(paste("comm", levels(lc2$edges$cluster)[i], sep = ""), lc2$edges[lc2$edges[, 3] == i, ])
+  assign(paste("g.", "comm", levels(lc2$edges$cluster)[i], sep = ""),
+         ggnet2(graph.data.frame(get(paste("comm", levels(lc2$edges$cluster)[i], sep = ""))), label = T))
+}
+```
+
+
+#09. Communities by trend
+
+```{r small comms}
+svg(filename = "fig03.svg")
+plotLinkCommGraph(lc2, c(1, 2, 3, 4, 6), pal = comm.palette)
+dev.off()
+```
+
+```{r mid sizes comms}
+svg(filename = "fig04.svg")
+plotLinkCommGraph(lc2, c(7, 9), pal = comm.palette)
+dev.off()
+```
+
+
+```{r orbicella centered comm}
+svg(filename = "fig05.svg")
+plotLinkCommGraph(lc2, c(5))
+dev.off()
+```
+
+```{r bbd centered comm}
+svg(filename = "fig06.svg")
+plotLinkCommGraph(lc2, c(8))
+dev.off()
+```
+
+```{r acropora centered comm}
+svg(filename = "fig07.svg")
+plotLinkCommGraph(lc2, c(10))
+dev.off()
+```
+
+```{r surveys comm}
+svg(filename = "fig08.svg")
+plotLinkCommGraph(lc2, c(11))
+dev.off()
+```
+
+```{r whote network}
+#svg(filename = "complete_network_test.svg", width = 15)
+plotLinkCommGraph(lc2, vlabel = F, pal = comm.palette, scale.vertices = 0.25)
+plotLinkCommGraph(lc2, vlabel = F, pal = comm.palette, scale.vertices = 0.25, 
+                  layout = layout.circle)
+plotLinkCommGraph(lc2, vlabel = F, pal = comm.palette, scale.vertices = 0.25, 
+                  layout = layout.graphopt)
+#dev.off()
+```
+
+External plots
+
+
+
+```{r gephi-backbone}
+sink("coral_backbone.gexf")
+igraph.to.gexf(coral.backbone)
+sink()
+```
+
+
+```{r gephi-main}
+sink("coral_main.gexf")
+igraph.to.gexf(coral.graph)
+sink()
+```
+
+
+
