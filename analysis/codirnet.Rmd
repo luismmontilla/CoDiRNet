@@ -1,5 +1,5 @@
 ---
-title: "cCoral Disease Research Network"
+title: "Coral Disease Research Network"
 author: "LMM", "AS", "AV", "JC", "AC"
 date: "25 de marzo de 2017"
 output: html_document
@@ -22,7 +22,7 @@ source("R/cmbDFrame.R")
 source("R/backbone2.R")
 #source("CVsplit.R")
 source("R/strenght_distribution.R")
-source("R/non_nested_height2.R")
+source("R/getMaxden.R")
 source("R/plotLinkCommMembers2.R")
 source("R/plotLinkCommGraph2.R")
 #devtools::install_github("thomasp85/patchwork", force=T)
