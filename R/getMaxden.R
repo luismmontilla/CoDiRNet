@@ -11,6 +11,10 @@
 
 getMaxden <- function(x){
   
+  if(length(getAllNestedComm(lc)) == 0) {
+    stop('there are no nested communities')
+  } else {
+  
   require(linkcomm) 
   a <- data.frame(x$pdens)
   a <- a[order(a$pdens, decreasing = T), 1]
@@ -34,4 +38,5 @@ getMaxden <- function(x){
   
   z <- x$pdens[(x$pdens[, 1] %in% b),]
   z
+  }
 }
