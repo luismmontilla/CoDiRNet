@@ -25,13 +25,22 @@ source("R/strenght_distribution.R")
 source("R/getMaxden.R")
 source("R/plotLinkCommMembers2.R")
 source("R/plotLinkCommGraph2.R")
-#devtools::install_github("thomasp85/patchwork", force=T)
-#library(patchwork) #this replaces cowplot
+#rcomm_exx
+source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/rcomm_exx.R?token=ANC4vCmHL9P-K8CpslgXX03hOzh_fT1Tks5bXyJtwA%3D%3D"))
+#xy_subsets
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/xy_subsets.R?token=ANC4vOheNymI7sU3IkjghOpvMAXk_vHgks5bXyRUwA%3D%3D'))
+#new_exy_calculation.R
+source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/new_exy_calculation.R?token=ANC4vMi0Xiitu_JIHBrnTogYxU6zlRWOks5bXynrwA%3D%3D"))
+#load permutational community assortativity
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/Permutational_community_assortativity.R?token=ANC4vCCSGbAfbmz5FjtwlSppKXaLBaqRks5bXyorwA%3D%3D'))
+# rcomm_exx
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/rcomm_exx.R?token=ANC4vBY60iLlFOWDk9udRWSYcNtuclz4ks5bW4AkwA%3D%3D'))
+
 ```
 
 ```{r Data}
-rawnet <- read.csv("data/master_coral_dis_net.csv", sep = ",", na.strings = "",
-                   header = T, stringsAsFactors = F)
+rawnet <- read.csv("data/master_coral_dis_net.csv", sep = ",",
+                   na.strings = "", header = T, stringsAsFactors = F)
 coral.att <- read.csv("data/glossary.csv") #this also provides the nodes attributes
 ```
 
@@ -58,10 +67,14 @@ Now, we define the graph and give a weight to the edges.
 
 ```{r Main network}
 coral.graph <- graph.data.frame(coral.edges, directed = F)
+
 E(coral.graph)$weight <- rep(1, ecount(coral.graph))
+
 coral.graph <- simplify(coral.graph,
                      edge.attr.comb = list(name="ignore", weight="sum"))
+
 is.simple(coral.graph)
+
 print(coral.graph)
 ```
 
@@ -87,11 +100,15 @@ Now we add some attributes to the nodes
 
 ```{r addition of attributes}
 glossary2 <- coral.att
+
 glossary2$node <- names(V(coral.graph))
+
 coral.att$node <- as.character(coral.att$node)
+
 for (i in 1:nrow(coral.att)) {
   glossary2$attribute[i] <- coral.att$attribute[glossary2$node[i] == tolower(coral.att$node)] 
 }
+
 V(coral.graph)$type <- glossary2$attribute
 ```
 
@@ -100,8 +117,11 @@ We perform our analysis over a reduced form of the network that retains the over
 ```{r Backbone network}
 coral.backbone <- graph.data.frame(backbone2(coral.graph), 
                                    directed = F)
+
 coral.backbone <- decompose.graph(coral.backbone)[[1]]
+
 is_simple(coral.backbone)
+
 coral.backbone <- simplify(coral.backbone, remove.multiple = T)
 ```
 
@@ -112,28 +132,27 @@ Veamos las propiedades de la red completa
 ##5.1 Basic properties
 
 ```{r}
-V(coral.graph) #numero de nodos
-E(coral.graph) #numero de enlaces
-graph.density(coral.graph) #densidad de la red
-count_components(coral.graph) #numero de componentes conectados
-mean(igraph::degree(coral.graph)) #grado promedio
-mean(strength(coral.graph))
+V(coral.graph) #number of nodes
+E(coral.graph) #numero de edges
+graph.density(coral.graph) #network density
+count_components(coral.graph) #connected components
+mean(igraph::degree(coral.graph)) #mean degree
+mean(strength(coral.graph)) #mean weighted degree
 ```
 
 ##5.2 Backbone properties
 
 ```{r}
-V(coral.backbone) #numero de nodos
-E(coral.backbone) #numero de enlaces
-graph.density(coral.backbone) #densidad de la red
-count_components(coral.backbone) #numero de componentes
-mean(degree(coral.backbone)) #grado promedio
-mean(strength(coral.backbone))
+V(coral.backbone) #number of nodes
+E(coral.backbone) #numero de edges
+graph.density(coral.backbone) #network density
+count_components(coral.backbone) #connected components
+mean(degree(coral.backbone)) #mean degree
+mean(strength(coral.backbone)) #mean weighted degree
 ```
 
 
-
-##5.4 Distribucion de grado
+##5.4 Degree distributions
 
 ```{r distribuciones de fuerza por atributo}
 sd_att <- data.frame(a = glossary2$attribute , 
@@ -188,11 +207,11 @@ fig01top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
 fig01mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
 fig01low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
 
-svg("fig01.svg", width = 5)
+#svg("fig01.svg", width = 5)
 plot_grid(fig01top, fig01mid, fig01low,  nrow = 3, align = "hv", 
           rel_widths = c(1, 1, 0.1)) #+ 
   #draw_label("DRAFT!", angle = 45, size = 80, alpha = .2)
-dev.off()
+#dev.off()
 ```
 
 
@@ -256,44 +275,48 @@ lc <- getLinkCommunities(raw.link.com)
 ```
 
 
-```{r}
-raw.link.com.id <- as.data.frame(cbind(get.edgelist(coral.backbone, names = F), 
-                      E(coral.backbone)$weight))
-colnames(raw.link.com.id) <- c("source","target","weight")
-write.csv(raw.link.com, "coral.backbone.csv", row.names = F) #write edge list
-write.csv(raw.link.com.id, "coral.backbone.id.csv", row.names = F) #write edge list
-```
-
-
 Now we analyze the relatedness between communities and determine possible metacommunities or adjustments in the cut value
 
 ```{r refining the communities}
-cr <- getClusterRelatedness(lc) #closeness between communities
-nested_comm <- getAllNestedComm(lc) #nested communities
+#cr <- getClusterRelatedness(lc) #closeness between communities
+#nested_comm <- getAllNestedComm(lc) #nested communities
 #getNodesIn(lc, clusterids = c(18)) #membership of communities
 ```
 
 ```{r}
-new_cut <- getMaxden(lc)
+new_cut <- getMaxden(lc) #in this case, we have no nested comms
+#lc <- (newLinkCommsAt(lc, cutat = new_cut[1]))
+#lc$clustsizes
+#write.csv(lc$nodeclusters, "node_membership.csv", row.names = F) #write node membership
 ```
 
-```{r recut}
-lc2 <- (newLinkCommsAt(lc, cutat = new_cut[1])) # 11 comm, 0 nested
-lc2$clustsizes
-#write.csv(lc$nodeclusters, "node_membership.csv", row.names = F) #write node membership
-#getNodesIn(lc2, clusterids = 1)
+#8. Communities robustness
+
+```{r}
+Pij_comm <- calc_Pmatrix(coral.backbone, 100)
+
+Exx <- rcomm_exx(Pij_comm)
+
+Exy <- rcom_exy()
+
+rcom <- (Exx - Exy)/(1 - Exy)
 ```
+
+
+#9. Plots and figures
 
 
 ```{r community membership plot}
-svg(filename="comm_membership.svg")
+#svg(filename="comm_membership.svg")
 #win.metafile(filename="cairo", antialias="default")
-comm.palette <- viridis_pal(option = "inferno")(lc2$numbers[3])
-plotLinkCommMembers2(lc2, nodes = head(names(lc2$numclusters), 90),
+comm.palette <- viridis_pal(option = "inferno")(lc$numbers[3])
+
+plotLinkCommMembers2(lc, nodes = head(names(lc$numclusters), 90),
                     pal = comm.palette,
-                    total = T, fontsize = 6, sigmafont = 4, comfont = 5, sumfont = 4,
-                    maxclusters = lc2$numbers[3], title = F, nspace = 5)
-dev.off()
+                    total = T, fontsize = 6, sigmafont = 4, comfont = 5,
+                    sumfont = 4,
+                    maxclusters = lc$numbers[3], title = F, nspace = 5)
+#dev.off()
 ```
 
 
@@ -309,33 +332,42 @@ now we can recheck the relatedness
 
 ```{r comm similarity}
 #svg(filename="fig02C.svg")
-cr2 <- getClusterRelatedness(lc2, hcmethod = "complete") #dissmililarity #between communities
+cr2 <- getClusterRelatedness(lc, hcmethod = "complete") #dissmililarity #between communities
 cr2$height <- 100*cr2$height
 #cr2$height <- 100-cr2$height
-plot(cr2, main="", sub="", xlab="Communities", ylab="Similarity (%)", axes=F)
+#plot(cr2, main="", sub="", xlab="Communities", ylab="Similarity (%)",
+#     axes=F)
 #axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
-axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
+#axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
 #dev.off()
 ```
 
 ```{r jaccard similarity matrix}
-cr2.matrix <- getClusterRelatedness(lc2, cluster = F) #Jaccard disimilarity
+cr2.matrix <- getClusterRelatedness(lc, cluster = F) #Jaccard disimilarity
 cr2.matrix <- 100*(1-cr2.matrix) #as % of Similarity
 ```
 
 
 ```{r simmilarity data}
-comm.matrix <- getCommunityMatrix(lc2, nodes = head(names(lc2$numclusters), lc2$numbers[2]))
+comm.matrix <- getCommunityMatrix(lc,nodes = head(names(lc$numclusters), lc$numbers[2]))
+
 comm.matrix <- t(comm.matrix)
+
 comm.jacc <- vegdist(comm.matrix,method = "jaccard", binary = T)
+
 comm.jacc <- (1-comm.jacc)
+
 comm.jacc <- as.matrix(comm.jacc)
-comm.graph <- graph_from_adjacency_matrix(comm.jacc, mode = "lower", diag = F, weighted = T, 
+
+comm.graph <- graph_from_adjacency_matrix(comm.jacc, mode = "lower",
+                                          diag = F, weighted = T, 
                                           add.rownames = T)
+
 E(comm.graph)$weight2 <- E(comm.graph)$weight*10
-V(comm.graph)$sizes <- c(3, 3, 3, 5, 12, 4, 9, 22, 6, 37, 36)
-V(comm.graph)$name <- c("C1", "C2", "C3", "C4", "C5", "C6",
-                        "C7", "C8", "C9", "C10", "C11")
+
+#V(comm.graph)$sizes <- c(3, 3, 3, 5, 12, 4, 9, 22, 6, 37, 36)
+#V(comm.graph)$name <- c("C1", "C2", "C3", "C4", "C5", "C6",
+#                        "C7", "C8", "C9", "C10", "C11")
 ```
 
 
@@ -448,8 +480,6 @@ plotLinkCommGraph(lc2, vlabel = F, pal = comm.palette, scale.vertices = 0.25,
 ```
 
 External plots
-
-
 
 ```{r gephi-backbone}
 sink("coral_backbone.gexf")
