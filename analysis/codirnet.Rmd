@@ -326,7 +326,7 @@ Exx <- rcomm_exx(Pij_comm)
 
 Exy <- rcom_exy()
 
-rcomx <- (Exx - Exy)/(1 - Exy)
+roc <- (Exx - Exy)/(1 - Exy)
 ```
 
 
