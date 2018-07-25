@@ -36,7 +36,8 @@ source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity
 source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/Permutational_community_assortativity.R?token=ANC4vCCSGbAfbmz5FjtwlSppKXaLBaqRks5bXyorwA%3D%3D'))
 # rcomm_exx
 source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/rcomm_exx.R?token=ANC4vBY60iLlFOWDk9udRWSYcNtuclz4ks5bW4AkwA%3D%3D'))
-
+#adj_to_edgelist
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/adj_to_edgelist.R?token=ANC4vFm_KUe0WpVjILXOtMMFAj2gPfpcks5bYdUdwA%3D%3D'))
 ```
 
 ```{r Data}
