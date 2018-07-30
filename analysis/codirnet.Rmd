@@ -221,7 +221,7 @@ plot_topic <- ggplot(sd_topic, aes(sd_topic$c)) +
 
 We can compose the previous distributions in a single plot
 
-```{r composed plot}
+```{r fig1-composed plot}
 fig01top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
 
 fig01mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
@@ -327,6 +327,7 @@ Exx <- rcomm_exx(Pij_comm)
 Exy <- rcom_exy()
 
 roc <- (Exx - Exy)/(1 - Exy)
+#We got a roc value of 0.23
 ```
 
 
@@ -334,7 +335,7 @@ roc <- (Exx - Exy)/(1 - Exy)
 
 
 ```{r community membership plot}
-#svg(filename="comm_membership.svg")
+svg("analysis/figures/supp_comm_membership.svg")
 #win.metafile(filename="cairo", antialias="default")
 comm.palette <- viridis_pal(option = "inferno")(lc$numbers[3])
 
@@ -343,44 +344,16 @@ plotLinkCommMembers2(lc, nodes = head(names(lc$numclusters), 90),
                     total = T, fontsize = 6, sigmafont = 4, comfont = 5,
                     sumfont = 4,
                     maxclusters = lc$numbers[3], title = F, nspace = 5)
-#dev.off()
-```
-
-
-
-```{r external membership plot}
-mmbr_matrix <- getCommunityMatrix(lc2, nodes = names(lc2$numclusters))
-rownames(mmbr_matrix) <- names(lc2$numclusters)
-write.csv(lc2$numclusters, file = "ext_nodes.csv")
-write.csv(mmbr_matrix, file = "ext_members.csv")
-```
-
-now we can recheck the relatedness
-
-```{r comm similarity}
-#svg(filename="fig02C.svg")
-cr2 <- getClusterRelatedness(lc, hcmethod = "complete") #dissmililarity #between communities
-cr2$height <- 100*cr2$height
-#cr2$height <- 100-cr2$height
-#plot(cr2, main="", sub="", xlab="Communities", ylab="Similarity (%)",
-#     axes=F)
-#axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
-#axis(side = 2, at = seq(0,100,10), labels = seq(100,0,-10))
-#dev.off()
-```
-
-```{r jaccard similarity matrix}
-cr2.matrix <- getClusterRelatedness(lc, cluster = F) #Jaccard disimilarity
-cr2.matrix <- 100*(1-cr2.matrix) #as % of Similarity
+dev.off()
 ```
 
 
 ```{r simmilarity data}
-comm.matrix <- getCommunityMatrix(lc,nodes = head(names(lc$numclusters), lc$numbers[2]))
+comm.matrix <- getCommunityMatrix(lc, nodes = head(names(lc$numclusters), lc$numbers[2]))
 
 comm.matrix <- t(comm.matrix)
 
-comm.jacc <- vegdist(comm.matrix,method = "jaccard", binary = T)
+comm.jacc <- vegdist(comm.matrix, method = "jaccard", binary = T)
 
 comm.jacc <- (1-comm.jacc)
 
@@ -392,13 +365,24 @@ comm.graph <- graph_from_adjacency_matrix(comm.jacc, mode = "lower",
 
 E(comm.graph)$weight2 <- E(comm.graph)$weight*10
 
-#V(comm.graph)$sizes <- c(3, 3, 3, 5, 12, 4, 9, 22, 6, 37, 36)
-#V(comm.graph)$name <- c("C1", "C2", "C3", "C4", "C5", "C6",
-#                        "C7", "C8", "C9", "C10", "C11")
+#
+
+comm.sizes <- data.frame(cbind(names(lc$clustsizes),lc$clustsizes), row.names = 1:length(lc$clustsizes))
+
+colnames(comm.sizes) <- c('comm', 'size')
+
+comm.sizes$comm <- as.numeric(as.character(comm.sizes$comm))
+
+comm.sizes$size <- as.numeric(as.character(comm.sizes$size))
+
+comm.sizes <- sort(comm.sizes)
+
+V(comm.graph)$name <- c(paste("C", 1:lc$numbers[3],sep = ''))
+V(comm.graph)$sizes <- comm.sizes$size
 ```
 
 
-```{r figure02A-comm similarity graph}
+```{r fig2A-comm similarity graph}
 #svg(filename="fig02A.svg")
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
@@ -421,16 +405,18 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
 ```
 
 
-```{r figure02B}
-table_cnct <- as.data.frame(getCommunityConnectedness(lc2))
+```{r fig2B}
+table_cnct <- as.data.frame(getCommunityConnectedness(lc))
+
 colnames(table_cnct) <- "Connectedness"
-table_cnct$Community <- seq(1:lc2$numbers[3])
-plot_cnct <- ggplot(table_cnct, aes(x = Community, y = Connectedness))+
+
+table_cnct$Community <- seq(1:lc$numbers[3])
+
+plot_cnct <- ggplot(table_cnct, aes(x = Community, y = Connectedness)) +
   geom_bar(stat = "identity", col="black", fill = "steelblue") +
   scale_x_discrete(name = "Communities",
-                   limits = seq(1:lc2$numbers[3]),
-                   labels = c("C1", "C2", "C3", "C4", "C5", "C6",
-                              "C7", "C8", "C9", "C10", "C11")) +
+                   limits = seq(1:lc$numbers[3]),
+                   labels = c(paste("C", 1:lc$numbers[3],sep = ''))) +
   ylab("Connectedness") + theme(axis.text=element_text(size = 10, angle = 90))
 plot_cnct
 ```
@@ -438,6 +424,7 @@ plot_cnct
 
 ```{r fig02 composed}
 svg(filename = "fig02.svg", width = 8.5, height = 4)
+
 plot_grid(comm_graph, plot_cnct, ncol = 2, labels = c("A", "B"), 
           rel_widths = c(1,0.7), label_size = 20)
 dev.off()
@@ -520,6 +507,3 @@ sink("coral_main.gexf")
 igraph.to.gexf(coral.graph)
 sink()
 ```
-
-
-
