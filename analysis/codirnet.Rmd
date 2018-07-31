@@ -230,7 +230,7 @@ fig01low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
 
 dir.create("analysis/figures/")
 
-png("analysis/figures/fig01.png", width = 480)
+svg("analysis/figures/fig01.svg", width = 8)
 
 plot_grid(fig01top, fig01mid, fig01low,  nrow = 3, 
           align = "hv", rel_widths = c(1, 1, 0.1))
@@ -383,7 +383,7 @@ V(comm.graph)$sizes <- comm.sizes$size
 
 
 ```{r fig2A-comm similarity graph}
-#svg(filename="fig02A.svg")
+
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
   geom_edges(aes(color = weight2, size = weight2*10)) +
@@ -402,7 +402,7 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
                          labels = c("3%", "14%", "28%", "46%"),
                          trans = "reverse") + theme_blank()
 plot(comm_graph)
-#dev.off()
+
 ```
 
 
@@ -423,11 +423,11 @@ plot_cnct
 ```
 
 
-```{r fig02 composed}
-svg(filename = "fig02.svg", width = 8.5, height = 4)
+```{r fig02-composed}
+svg(filename = "analysis/figures/fig02.svg", width = 8.5, height = 4)
 
 plot_grid(comm_graph, plot_cnct, ncol = 2, labels = c("A", "B"), 
-          rel_widths = c(1,0.7), label_size = 20)
+          rel_widths = c(1, 0.7), label_size = 20)
 dev.off()
 ```
 
@@ -436,7 +436,7 @@ dev.off()
 
 Each graph are assigned to a g.comm# where "#" is the number of the community
 
-```{r, individual community plots}
+```{r individual community plots}
 for(i in 1:length(levels(lc2$edges$cluster))) {
   assign(paste("comm", levels(lc2$edges$cluster)[i], sep = ""), lc2$edges[lc2$edges[, 3] == i, ])
   assign(paste("g.", "comm", levels(lc2$edges$cluster)[i], sep = ""),
