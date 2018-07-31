@@ -392,14 +392,14 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
   geom_nodetext_repel(aes(label = vertex.names),
                       nudge_x = c(rep(0.05,6),rep(-0.05,9))) +
   scale_size_continuous(name = "Community\nsize",
-                        breaks = 1.5*c(3, 9, 14, 18, 24),
-                        labels = c("3", "9", "14", "18", "24"),
+                        breaks = c(4, 9, 17, 24)**1.5,
+                        labels = c("4", "9", "17", "24"),
                         guide = guide_legend(override.aes = list(
-                          linetype = c(rep(0, 5)))
+                          linetype = c(rep(0, 4)))
                         )) +
   scale_color_continuous(name = "Shared nodes",
-                         breaks = c(3/10, 9/10, 14/10, 24/10),
-                         labels = c("3%", "9%", "14%", "24%"),
+                         breaks = c(3/10, 14/10, 28/10, 46/10),
+                         labels = c("3%", "14%", "28%", "46%"),
                          trans = "reverse") + theme_blank()
 plot(comm_graph)
 #dev.off()
