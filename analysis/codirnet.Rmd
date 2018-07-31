@@ -432,24 +432,32 @@ dev.off()
 ```
 
 
-#08. individual community plots
+#07a. individual community plots
 
 Each graph are assigned to a g.comm# where "#" is the number of the community
 
 ```{r individual community plots}
-for(i in 1:length(levels(lc2$edges$cluster))) {
-  assign(paste("comm", levels(lc2$edges$cluster)[i], sep = ""), lc2$edges[lc2$edges[, 3] == i, ])
-  assign(paste("g.", "comm", levels(lc2$edges$cluster)[i], sep = ""),
-         ggnet2(graph.data.frame(get(paste("comm", levels(lc2$edges$cluster)[i], sep = ""))), label = T))
+
+for(i in 1:length(levels(lc$edges$cluster))) {
+  assign(paste("comm", levels(lc$edges$cluster)[i], sep = ""),
+         lc$edges[lc$edges[, 3] == i, ])
+  
+  assign(paste("g.", "comm", levels(lc$edges$cluster)[i], sep = ""),
+         ggnet2(graph.data.frame(get(paste("comm", levels(lc$edges$cluster)[i],
+                                           sep = ""))), label = T))
 }
+
 ```
 
+We can plot now the membership matrices depending of the desired communities properties, e.g. we can study the communities according on their size:
 
-#09. Communities by trend
+#07. Communities by trend
 
 ```{r small comms}
 svg(filename = "fig03.svg")
-plotLinkCommGraph(lc2, c(1, 2, 3, 4, 6), pal = comm.palette)
+
+plotLinkCommGraph(lc, c(3, 6, 8, 9, 10), pal = comm.palette)
+
 dev.off()
 ```
 
