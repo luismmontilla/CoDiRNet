@@ -451,6 +451,31 @@ for(i in 1:length(levels(lc$edges$cluster))) {
 
 We can plot now the membership matrices depending of the desired communities properties, e.g. we can study the communities according on their size:
 
+Communities 3, 6, 8, 9, and, 10 are the smallest
+
+
+```{r membership matrix for custom plots}
+
+members_1 <- lc$nodeclusters %>% 
+                  left_join(coral.att, by = 'node') %>%
+  filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
+  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
+  group_by(attribute)
+
+short_pallete <- viridis_pal(option = "viridis")(5)
+
+ggplot(data = members_1, 
+       aes(x = cluster, y = node, fill = cluster)) + 
+  geom_tile() + 
+  #coord_fixed(ratio = 0.5) +
+  scale_fill_manual(values = short_pallete) +
+  facet_grid(attribute ~., scales='free_y', space="free_y") +
+  theme(legend.position="none",
+        strip.background = element_rect(color = "white"))
+```
+
+
+
 #07. Communities by trend
 
 ```{r small comms}
