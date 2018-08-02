@@ -48,7 +48,7 @@ rawnet <- read.csv("data/master_codirnet.csv", sep = ",",
 coral.att <- read.csv("data/glossary_codirnet.csv") #this also provides the nodes attributes
 ```
 
-```{r, underscore to spaces}
+```{r underscore to spaces}
 rawnet <- data.frame(lapply(rawnet, function(x) {
   gsub("_", " ", x)
   }
@@ -223,7 +223,7 @@ plot_topic <- ggplot(sd_topic, aes(sd_topic$c)) +
 
 We can compose the previous distributions in a single plot
 
-```{r fig1-composed plot}
+```{r fig01-composed plot}
 fig01top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
 
 fig01mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
@@ -372,7 +372,7 @@ V(comm.graph)$sizes <- comm.sizes$size
 ```
 
 
-```{r fig2A-comm similarity graph}
+```{r fig02A-comm similarity graph}
 
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
@@ -396,22 +396,22 @@ plot(comm_graph)
 ```
 
 
-```{r fig2b}
+```{r fig02B}
 plot_hubs <- data.frame(x1 = names(lc$numcluster[lc$numclusters >= 5]),
                           x2 = lc$numcluster[lc$numclusters >= 5]) %>% 
   `row.names<-`(seq(1:8)) %>% 
   ggtexttable(rows = NULL, cols = c('Nodes', 'Number of\ncommunities'),
-              theme = ttheme('mBlue'))
+              theme = ttheme('mBlue', base_size = 9))
   
 plot_hubs
 ```
 
 
 ```{r fig02-composed}
-svg(filename = "analysis/figures/fig02.svg", width = 12, height = 7)
+svg(filename = "analysis/figures/fig02.svg", width = 8.5, height = 4)
 
-plot_grid(comm_graph, plot_hubs, ncol = 2, 
-          rel_widths = c(1, 0.45), label_size = 20)
+plot_grid(comm_graph, plot_hubs, ncol = 2, rel_widths = c(2, 1))
+
 dev.off()
 ```
 
