@@ -457,14 +457,9 @@ ggplot(data = members_1,
        aes(x = cluster, y = node, fill = cluster)) + 
   geom_tile() +
   scale_fill_manual(values = short_pallete) +
-<<<<<<< HEAD
-  facet_grid(attribute ~., scales='free_y', space = "free_y") +
-  theme(legend.position="none",
-=======
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
->>>>>>> 47b0e74af6a4363673a5066531afa213c34009cf
-        strip.background = element_rect(color = "white"))
+        strip.background = element_rect(colour = "black", fill = "white"))
 ```
 
 ```{r medium-sized communities}
