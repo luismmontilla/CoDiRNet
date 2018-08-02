@@ -15,7 +15,7 @@ backbone2 <- function(x){
 require(igraph)
   
   ## We extract the edge matrix from the graph
-edge_matrix <- as_data_frame(x)
+edge_matrix <- igraph::as_data_frame(x)
 
   ## Convert the edge_matrix into one vector and assign a number
 
