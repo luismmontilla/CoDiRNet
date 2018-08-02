@@ -1,6 +1,6 @@
 ---
 title: "Coral Disease Research Network"
-author: "LMM", "AS", "AV", "JC", "AC"
+author: "LMM", "AA", "AV", "AC"
 date: "25 de marzo de 2017"
 output: html_document
 editor_options: 
