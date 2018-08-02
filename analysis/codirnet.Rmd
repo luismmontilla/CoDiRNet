@@ -11,11 +11,12 @@ editor_options:
 ```{r packages & scripts}
 library(igraph)
 library(disparityfilter)
-library(cowplot)
 library(linkcomm)
 library(intergraph)
-library(GGally)
+#library(GGally)
+library(ggpubr)
 library(ggrepel)
+library(cowplot)
 library(viridis)
 library(ggnetwork)
 library(vegan)
@@ -395,28 +396,22 @@ plot(comm_graph)
 ```
 
 
-```{r fig2B}
-table_cnct <- as.data.frame(getCommunityConnectedness(lc))
-
-colnames(table_cnct) <- "Connectedness"
-
-table_cnct$Community <- seq(1:lc$numbers[3])
-
-plot_cnct <- ggplot(table_cnct, aes(x = Community, y = Connectedness)) +
-  geom_bar(stat = "identity", col="black", fill = "steelblue") +
-  scale_x_discrete(name = "Communities",
-                   limits = seq(1:lc$numbers[3]),
-                   labels = c(paste("C", 1:lc$numbers[3],sep = ''))) +
-  ylab("Connectedness") + theme(axis.text=element_text(size = 10, angle = 90))
-plot_cnct
+```{r fig2b}
+plot_hubs <- data.frame(x1 = names(lc$numcluster[lc$numclusters >= 5]),
+                          x2 = lc$numcluster[lc$numclusters >= 5]) %>% 
+  `row.names<-`(seq(1:8)) %>% 
+  ggtexttable(rows = NULL, cols = c('Node', 'Number of\ncommunities'),
+              theme = ttheme('mBlue'))
+  
+plot_hubs
 ```
 
 
 ```{r fig02-composed}
 svg(filename = "analysis/figures/fig02.svg", width = 8.5, height = 4)
 
-plot_grid(comm_graph, plot_cnct, ncol = 2, labels = c("A", "B"), 
-          rel_widths = c(1, 0.7), label_size = 20)
+plot_grid(comm_graph, plot_hubs, ncol = 2, 
+          rel_widths = c(1, 0.45), label_size = 20)
 dev.off()
 ```
 
