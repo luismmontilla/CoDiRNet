@@ -19,6 +19,7 @@ library(ggrepel)
 library(viridis)
 library(ggnetwork)
 library(vegan)
+library(dplyr)
 source("R/cmbDFrame.R")
 source("R/backbone2.R")
 #source("CVsplit.R")
@@ -431,23 +432,7 @@ plot_grid(comm_graph, plot_cnct, ncol = 2, labels = c("A", "B"),
 dev.off()
 ```
 
-
-#07a. individual community plots
-
-Each graph are assigned to a g.comm# where "#" is the number of the community
-
-```{r individual community plots}
-
-for(i in 1:length(levels(lc$edges$cluster))) {
-  assign(paste("comm", levels(lc$edges$cluster)[i], sep = ""),
-         lc$edges[lc$edges[, 3] == i, ])
-  
-  assign(paste("g.", "comm", levels(lc$edges$cluster)[i], sep = ""),
-         ggnet2(graph.data.frame(get(paste("comm", levels(lc$edges$cluster)[i],
-                                           sep = ""))), label = T))
-}
-
-```
+##7.2 Patterns in communities
 
 We can plot now the membership matrices depending of the desired communities properties, e.g. we can study the communities according on their size:
 
@@ -456,8 +441,8 @@ Communities 3, 6, 8, 9, and, 10 are the smallest
 
 ```{r membership matrix for custom plots}
 
-members_1 <- lc$nodeclusters %>% 
-                  left_join(coral.att, by = 'node') %>%
+members_1 <- lc$nodeclusters %>%
+  left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
   group_by(attribute)
@@ -473,6 +458,48 @@ ggplot(data = members_1,
   theme(legend.position="none",
         strip.background = element_rect(color = "white"))
 ```
+
+```{r}
+members_2 <- lc$nodeclusters %>%
+  left_join(coral.att, by = 'node') %>%
+  filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
+  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
+  group_by(attribute)
+
+short_pallete <- viridis_pal(option = "viridis")(5)
+
+ggplot(data = members_2, 
+       aes(x = cluster, y = node, fill = cluster)) + 
+  geom_tile() + 
+  #coord_fixed(ratio = 0.5) +
+  scale_fill_manual(values = short_pallete) +
+  facet_grid(attribute ~., scales='free_y', space="free_y") +
+  theme(legend.position="none",
+        strip.background = element_rect(color = "white"))
+```
+
+```{r}
+members_3 <- lc$nodeclusters %>%
+  left_join(coral.att, by = 'node') %>%
+  filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
+  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
+  group_by(attribute)
+
+short_pallete <- viridis_pal(option = "viridis")(5)
+
+ggplot(data = members_3, 
+       aes(x = cluster, y = node, fill = cluster)) + 
+  geom_tile() + 
+  #coord_fixed(ratio = 0.5) +
+  scale_fill_manual(values = short_pallete) +
+  facet_grid(attribute ~., scales='free_y', space="free_y") +
+  theme(legend.position="none",
+        strip.background = element_rect(color = "white"))
+```
+
+
+
+
 
 
 
