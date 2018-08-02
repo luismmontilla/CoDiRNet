@@ -455,11 +455,12 @@ short_pallete <- viridis_pal(option = "viridis")(5)
 
 ggplot(data = members_1, 
        aes(x = cluster, y = node, fill = cluster)) + 
-  geom_tile() +
+  geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
-        strip.background = element_rect(colour = "black", fill = "white"))
+        strip.background = element_rect(color = "black", fill = "white"),
+        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm")))
 ```
 
 ```{r medium-sized communities}
