@@ -109,7 +109,7 @@ glossary2 <- coral.att
 
 glossary2$node <- names(V(coral.graph))
 
-coral.att$node <- as.character(coral.att$node)
+coral.att$node <- as.character(tolower(coral.att$node))
 
 for (i in 1:nrow(coral.att)) {
   glossary2$attribute[i] <- coral.att$attribute[glossary2$node[i] == tolower(coral.att$node)] 
