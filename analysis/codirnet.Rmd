@@ -380,7 +380,7 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
   geom_nodes(aes(size = sizes**1.5), color = "black", fill = "black") +
   scale_color_gradient(low = "blue", high = "black") +
   geom_nodetext_repel(aes(label = vertex.names),
-                      nudge_x = c(rep(0.05,6),rep(-0.05,9))) +
+                      nudge_x = c(rep(0.05,8),rep(-0.05,7))) +
   scale_size_continuous(name = "Community\nsize",
                         breaks = c(4, 9, 17, 24)**1.5,
                         labels = c("4", "9", "17", "24"),
@@ -400,7 +400,7 @@ plot(comm_graph)
 plot_hubs <- data.frame(x1 = names(lc$numcluster[lc$numclusters >= 5]),
                           x2 = lc$numcluster[lc$numclusters >= 5]) %>% 
   `row.names<-`(seq(1:8)) %>% 
-  ggtexttable(rows = NULL, cols = c('Node', 'Number of\ncommunities'),
+  ggtexttable(rows = NULL, cols = c('Nodes', 'Number of\ncommunities'),
               theme = ttheme('mBlue'))
   
 plot_hubs
@@ -408,7 +408,7 @@ plot_hubs
 
 
 ```{r fig02-composed}
-svg(filename = "analysis/figures/fig02.svg", width = 8.5, height = 4)
+svg(filename = "analysis/figures/fig02.svg", width = 12, height = 7)
 
 plot_grid(comm_graph, plot_hubs, ncol = 2, 
           rel_widths = c(1, 0.45), label_size = 20)
