@@ -442,18 +442,20 @@ Communities 3, 6, 8, 9, and, 10 are the smallest clusters
 members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
-  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
-  group_by(attribute)
+  mutate(attribute = factor(attribute, levels = unique(attribute)),
+         node = factor(node, levels = sort(unique(node), decreasing = T))) 
+  
 
 short_pallete <- viridis_pal(option = "viridis")(5)
 
 ggplot(data = members_1, 
        aes(x = cluster, y = node, fill = cluster)) + 
-  geom_tile() +
+  geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
-        strip.background = element_rect(color = "white"))
+        strip.background = element_rect(color = "black", fill = "white"),
+        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm")))
 ```
 
 ```{r medium-sized communities}
