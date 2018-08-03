@@ -437,16 +437,27 @@ We can plot now the membership matrices depending of the desired communities pro
 
 Communities 3, 6, 8, 9, and, 10 are the smallest clusters
 
+```{r plot attributes}
+coral.commconn <- data.frame(node = names(getCommunityCentrality(lc)), 
+                             commconn = getCommunityCentrality(lc),
+                             row.names = seq(1:lc$numbers[2]))
+
+coral.att <- left_join(coral.att, coral.commconn, by = 'node')
+
+rm(coral.commconn)
+
+short_pallete <- viridis_pal(option = "viridis")(5)
+```
+
 
 ```{r small communities}
 members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
-         node = factor(node, levels = sort(unique(node), decreasing = T))) 
-  
+         node = factor(node, levels = sort(unique(node), decreasing = T)))
 
-short_pallete <- viridis_pal(option = "viridis")(5)
+
 
 ggplot(data = members_1, 
        aes(x = cluster, y = node, fill = cluster)) + 
@@ -455,7 +466,8 @@ ggplot(data = members_1,
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
         strip.background = element_rect(color = "black", fill = "white"),
-        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm")))
+        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
+  geom_point(aes(x = cluster, y = node, size = commconn))
 ```
 
 ```{r medium-sized communities}
@@ -465,7 +477,6 @@ members_2 <- lc$nodeclusters %>%
   mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
   group_by(attribute)
 
-short_pallete <- viridis_pal(option = "viridis")(5)
 
 ggplot(data = members_2, 
        aes(x = cluster, y = node, fill = cluster)) + 
@@ -483,7 +494,7 @@ members_3 <- lc$nodeclusters %>%
   mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
   group_by(attribute)
 
-short_pallete <- viridis_pal(option = "viridis")(5)
+
 
 ggplot(data = members_3, 
        aes(x = cluster, y = node, fill = cluster)) + 
