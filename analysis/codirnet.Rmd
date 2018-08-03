@@ -489,6 +489,7 @@ ggplot(data = members_1,
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
+        scale_size(range=c(1, 5)) +
         labs(y = "Nodes", x = "Cluster")
 ```
 
@@ -510,6 +511,7 @@ ggplot(data = members_2,
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
+        scale_size(range=c(0.7, 4)) +
         labs(y = "Nodes", x = "Cluster")
 ```
 
@@ -531,6 +533,7 @@ ggplot(data = members_3,
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
+        scale_size(range=c(0.7, 3.5)) +
         labs(y = "Nodes", x = "Cluster")
 ```
 
