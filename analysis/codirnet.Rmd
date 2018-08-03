@@ -454,7 +454,7 @@ coral.att$abb <- namesnode2
 
 rm(coral.commconn)
 
-short_pallete <- viridis_pal(option = "viridis")(5)
+short_pallete <- viridis_pal(option = "viridis")(7) #we added an extra color to avoid confusing commcon points
 ```
 
 
@@ -463,54 +463,65 @@ members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
-         node = factor(abb, levels = sort(unique(abb), decreasing = T)))
-
+         abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
 ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
-  scale_fill_manual(values = short_pallete) +
+  scale_fill_manual(values = short_pallete[2:7]) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
-  geom_point(aes(x = cluster, y = abb, size = commconn))
+        geom_point(aes(x = cluster, y = abb, size = commconn), 
+                   color= "white", alpha = 1/2) +
+        scale_size(range=c(1, 5)) +
+        labs(y = "Nodes", x = "Cluster")
 ```
 
 ```{r medium-sized communities}
 members_2 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
-  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
-  group_by(attribute)
+  mutate(attribute = factor(attribute, levels = unique(attribute)),
+         abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
 ggplot(data = members_2, 
-       aes(x = cluster, y = node, fill = cluster)) + 
-  geom_tile() + 
-  scale_fill_manual(values = short_pallete) +
-  facet_grid(attribute ~., scales='free_y', space="free_y") +
-  theme(legend.position="none",
-        strip.background = element_rect(color = "white"))
+       aes(x = cluster, y = abb, fill = cluster)) + 
+  geom_tile(color = "white") +
+  scale_fill_manual(values = short_pallete[2:7]) +
+  facet_grid(attribute~., scales = "free_y", space = "free_y") +
+  theme(legend.position = "none",
+        strip.background = element_rect(color = "black", fill = "white"),
+        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
+        geom_point(aes(x = cluster, y = abb, size = commconn), 
+                   color= "white", alpha = 1/2) +
+        scale_size(range=c(0.7, 4)) +
+        labs(y = "Nodes", x = "Cluster")
 ```
 
 ```{r large communities}
 members_3 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
-  mutate(attribute = factor(attribute, levels = unique(attribute))) %>% 
-  group_by(attribute)
-
+  mutate(attribute = factor(attribute, levels = unique(attribute)),
+         abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
 ggplot(data = members_3, 
-       aes(x = cluster, y = node, fill = cluster)) + 
-  geom_tile() +
-  scale_fill_manual(values = short_pallete) +
-  facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
+       aes(x = cluster, y = abb, fill = cluster)) + 
+  geom_tile(color = "white") +
+  scale_fill_manual(values = short_pallete[2:7]) +
+  facet_grid(attribute~., scales = "free_y", space = "free_y") +
   theme(legend.position = "none",
-        strip.background = element_rect(color = "white"))
+        strip.background = element_rect(color = "black", fill = "white"),
+        strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
+        geom_point(aes(x = cluster, y = abb, size = commconn), 
+                   color= "white", alpha = 1/2) +
+        scale_size(range=c(0.7, 3.5)) +
+        labs(y = "Nodes", x = "Cluster")
 ```
 
 #8. External plots
