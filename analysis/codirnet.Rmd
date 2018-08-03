@@ -432,7 +432,7 @@ namesnode <- coral.att$node
 namesnode2 <- NULL
 
 for(i in 1:length(namesnode))  {
-  if(stri_length(namesnode[i]) < 15 | length(strsplit(namesnode[i], " ")[[1]]) == 1)  {
+  if(stri_length(namesnode[i]) < 17 | length(strsplit(namesnode[i], " ")[[1]]) == 1)  {
     namesnode2[i] <- stri_trans_totitle(namesnode[i])
   } else {
     namesnode2[i] <- strsplit(namesnode[i], " ") %>% 
@@ -471,13 +471,18 @@ ggplot(data = members_1,
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
-  theme(legend.position = "none",
+  theme(legend.position = "bottom",
+        legend.key = element_rect(fill = "grey"),
+        legend.title = element_blank(),
+        legend.justification = "center",
+        panel.border = element_rect(colour = "black"),
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
         scale_size(range=c(1, 5)) +
-        labs(y = "Nodes", x = "Cluster")
+        labs(y = "Nodes", x = "Cluster") +
+        guides(fill = FALSE, size = guide_legend(nrow = 1))
 ```
 
 ```{r medium-sized communities}
