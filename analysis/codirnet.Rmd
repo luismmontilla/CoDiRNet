@@ -21,6 +21,8 @@ library(viridis)
 library(ggnetwork)
 library(vegan)
 library(dplyr)
+library(strigr)
+library(stringi)
 source("R/cmbDFrame.R")
 source("R/backbone2.R")
 #source("CVsplit.R")
@@ -437,12 +439,31 @@ We can plot now the membership matrices depending of the desired communities pro
 
 Communities 3, 6, 8, 9, and, 10 are the smallest clusters
 
+```{r Node abbreviations}
+namesnode <- coral.att$node 
+
+namesnode2 <- NULL
+
+for(i in 1:length(namesnode))  {
+  if(stri_length(namesnode[i]) < 15 | length(strsplit(namesnode[i], " ")[[1]]) == 1)  {
+    namesnode2[i] <- stri_trans_totitle(namesnode[i])
+  } else {
+    namesnode2[i] <- strsplit(namesnode[i], " ") %>% 
+    sapply(function(x){paste(stri_trans_totitle(paste(substring(x[1], 1, 15))), 
+                           toupper(paste(substring(x[2:length(x)], 1, 1), collapse = "")), 
+                           collapse = "")})
+  }
+}
+```
+
+
 ```{r plot attributes}
 coral.commconn <- data.frame(node = names(getCommunityCentrality(lc)), 
                              commconn = getCommunityCentrality(lc),
                              row.names = seq(1:lc$numbers[2]))
 
 coral.att <- left_join(coral.att, coral.commconn, by = 'node')
+coral.att$abb <- namesnode2
 
 rm(coral.commconn)
 
@@ -455,19 +476,19 @@ members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
-         node = factor(node, levels = sort(unique(node), decreasing = T)))
+         node = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
 
 ggplot(data = members_1, 
-       aes(x = cluster, y = node, fill = cluster)) + 
+       aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
-  geom_point(aes(x = cluster, y = node, size = commconn))
+  geom_point(aes(x = cluster, y = abb, size = commconn))
 ```
 
 ```{r medium-sized communities}
