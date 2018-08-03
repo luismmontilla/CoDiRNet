@@ -476,7 +476,7 @@ members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
-         node = factor(abb, levels = sort(unique(abb), decreasing = T)))
+         abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
 
@@ -488,7 +488,8 @@ ggplot(data = members_1,
   theme(legend.position = "none",
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
-  geom_point(aes(x = cluster, y = abb, size = commconn))
+        geom_point(aes(x = cluster, y = abb, size = commconn), 
+                   color= "black", alpha = 1/2)
 ```
 
 ```{r medium-sized communities}
