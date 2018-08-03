@@ -397,10 +397,10 @@ plot(comm_graph)
 
 
 ```{r fig02B}
-plot_hubs <- data.frame(x1 = names(lc$numcluster[lc$numclusters >= 5]),
-                          x2 = lc$numcluster[lc$numclusters >= 5]) %>% 
-  `row.names<-`(seq(1:8)) %>% 
-  ggtexttable(rows = NULL, cols = c('Nodes', 'Number of\ncommunities'),
+plot_hubs <- data.frame(x1 = names(head(getCommunityCentrality(lc), 10)),
+                          x2 = round(head(getCommunityCentrality(lc), 10), 2)) %>% 
+  `row.names<-`(seq(1:10)) %>% 
+  ggtexttable(rows = NULL, cols = c('Nodes', 'Community\ncentrality'),
               theme = ttheme('mBlue', base_size = 9))
   
 plot_hubs
