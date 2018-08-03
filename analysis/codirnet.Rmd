@@ -467,7 +467,7 @@ coral.att$abb <- namesnode2
 
 rm(coral.commconn)
 
-short_pallete <- viridis_pal(option = "viridis")(5)
+short_pallete <- viridis_pal(option = "viridis")(7) #we added an extra color to avoid confusing commcon points
 ```
 
 
@@ -479,17 +479,17 @@ members_1 <- lc$nodeclusters %>%
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
 
-
 ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
-  scale_fill_manual(values = short_pallete) +
+  scale_fill_manual(values = short_pallete[2:7]) +
   facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
   theme(legend.position = "none",
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
-                   color= "black", alpha = 1/2)
+                   color= "white", alpha = 1/2) +
+        labs(y = "Nodes", x = "Cluster")
 ```
 
 ```{r medium-sized communities}
