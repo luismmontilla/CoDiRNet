@@ -16,7 +16,7 @@ library(intergraph)
 #library(GGally)
 library(ggpubr)
 library(ggrepel)
-library(cowplot)
+#library(cowplot)
 library(viridis)
 library(ggnetwork)
 library(vegan)
@@ -374,7 +374,7 @@ V(comm.graph)$sizes <- comm.sizes$size
 ```
 
 
-```{r fig02A-comm similarity graph}
+```{r fig02-comm similarity graph}
 
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
@@ -392,30 +392,17 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
   scale_color_continuous(name = "Shared nodes",
                          breaks = c(3/10, 14/10, 28/10, 46/10),
                          labels = c("3%", "14%", "28%", "46%"),
-                         trans = "reverse") + theme_blank()
+                         trans = "reverse") + 
+  theme_blank()
+
+svg('analysis/figures/fig02.svg')
+
 plot(comm_graph)
 
-```
-
-
-```{r fig02B}
-plot_hubs <- data.frame(x1 = names(head(getCommunityCentrality(lc), 10)),
-                          x2 = round(head(getCommunityCentrality(lc), 10), 2)) %>% 
-  `row.names<-`(seq(1:10)) %>% 
-  ggtexttable(rows = NULL, cols = c('Nodes', 'Community\ncentrality'),
-              theme = ttheme('mBlue', base_size = 9))
-  
-plot_hubs
-```
-
-
-```{r fig02-composed}
-svg(filename = "analysis/figures/fig02.svg", width = 8.5, height = 4)
-
-plot_grid(comm_graph, plot_hubs, ncol = 2, rel_widths = c(2, 1))
-
 dev.off()
+
 ```
+
 
 ##7.2. Membership matrices
 
