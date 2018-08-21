@@ -16,7 +16,7 @@ library(intergraph)
 #library(GGally)
 library(ggpubr)
 library(ggrepel)
-#library(cowplot)
+library(cowplot)
 library(viridis)
 library(ggnetwork)
 library(vegan)
@@ -186,7 +186,7 @@ And visualize each distribution
 
 ```{r weighted degree plot}
 plot_all <- ggplot(sd_att, aes(sd_att$c)) + 
-  geom_histogram(binwidth = 40) + xlab("Vertex strength") +
+  geom_histogram(binwidth = 40, fill = 'black') + xlab("Vertex strength") +
   ylab("Frequency")
 ```
 
@@ -195,7 +195,7 @@ plot_all <- ggplot(sd_att, aes(sd_att$c)) +
 sd_disease <- sd_att[sd_att$a=="disease",]
 
 plot_disease <- ggplot(sd_disease, aes(sd_disease$c)) +
-  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  geom_histogram(binwidth = 50, fill = 'black') + xlab("Vertex strength") +
   ylab("Frequency")
 ```
 
@@ -203,7 +203,7 @@ plot_disease <- ggplot(sd_disease, aes(sd_disease$c)) +
 sd_ecoregion <- sd_att[sd_att$a=="ecoregion",]
 
 plot_ecoregion <- ggplot(sd_ecoregion, aes(sd_ecoregion$c)) +
-  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  geom_histogram(binwidth = 50, fill = 'black') + xlab("Vertex strength") +
   ylab("Frequency")
 ```
 
@@ -211,7 +211,7 @@ plot_ecoregion <- ggplot(sd_ecoregion, aes(sd_ecoregion$c)) +
 sd_genera <- sd_att[sd_att$a=="genera",]
 
 plot_genera <- ggplot(sd_genera, aes(sd_genera$c)) +
-  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  geom_histogram(binwidth = 50, fill = 'black') + xlab("Vertex strength") +
   ylab("Frequency")
 ```
 
@@ -219,7 +219,7 @@ plot_genera <- ggplot(sd_genera, aes(sd_genera$c)) +
 sd_topic <- sd_att[sd_att$a=="topic",]
 
 plot_topic <- ggplot(sd_topic, aes(sd_topic$c)) +
-  geom_histogram(binwidth = 50) + xlab("Vertex strength") +
+  geom_histogram(binwidth = 50, fill = 'black') + xlab("Vertex strength") +
   ylab("Frequency")
 ```
 
@@ -458,13 +458,14 @@ short_pallete <- viridis_pal(option = "viridis")(7) #we added an extra color to 
 ```
 
 
-```{r small communities}
+```{r fig03-small communities}
 members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
+svg("analysis/figures/fig03.svg")
 
 ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -483,15 +484,18 @@ ggplot(data = members_1,
         scale_size(range=c(1, 5)) +
         labs(y = "Nodes", x = "Cluster") +
         guides(fill = FALSE, size = guide_legend(nrow = 1))
+
+dev.off()
 ```
 
-```{r medium-sized communities}
+```{r fig04-medium-sized communities}
 members_2 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
+svg("analysis/figures/fig04.svg")
 
 ggplot(data = members_2, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -505,15 +509,17 @@ ggplot(data = members_2,
                    color= "white", alpha = 1/2) +
         scale_size(range=c(0.7, 4)) +
         labs(y = "Nodes", x = "Cluster")
+dev.off()
 ```
 
-```{r large communities}
+```{r fig05-large communities}
 members_3 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
 
+svg("analysis/figures/fig05.svg")
 
 ggplot(data = members_3, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -527,6 +533,8 @@ ggplot(data = members_3,
                    color= "white", alpha = 1/2) +
         scale_size(range=c(0.7, 3.5)) +
         labs(y = "Nodes", x = "Cluster")
+
+dev.off()
 ```
 
 #8. External plots
