@@ -328,12 +328,13 @@ Pij_comm <- calc_Pmatrix(coral.backbone, 100)
 
 Exx <- rcomm_exx(Pij_comm)
 
-Exy <- rcom_exy()
+Exy <- rcomm_exy(Pij_comm)
 
 roc <- (Exx - Exy)/(1 - Exy)
-#We got a roc value of 0.23
+print(roc)
 ```
 
+We got a roc value of 0.24
 
 #7. Plots and figures
 
