@@ -465,6 +465,8 @@ members_1 <- lc$nodeclusters %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
+levels(members_1$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
+levels(members_1$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
 svg("analysis/figures/fig03.svg")
 
@@ -472,19 +474,22 @@ ggplot(data = members_1,
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
-  facet_grid(attribute ~., scales = 'free_y', space = "free_y") +
+  facet_grid(attribute ~., scales = 'free_y', space = "free_y") + 
+  theme_bw() +
   theme(legend.position = "bottom",
-        legend.key = element_rect(fill = "grey"),
-        legend.title = element_blank(),
+        legend.key = element_rect(fill = short_pallete[4]),
         legend.justification = "center",
         panel.border = element_rect(colour = "black"),
+        panel.grid = element_blank(),
+        panel.spacing.y = unit(0,"line"),
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
         scale_size(range=c(1, 5)) +
         labs(y = "Nodes", x = "Cluster") +
-        guides(fill = FALSE, size = guide_legend(nrow = 1))
+        guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality")) 
+               
 
 dev.off()
 ```
@@ -495,6 +500,8 @@ members_2 <- lc$nodeclusters %>%
   filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
+levels(members_2$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
+levels(members_2$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
 svg("analysis/figures/fig04.svg")
 
@@ -503,13 +510,20 @@ ggplot(data = members_2,
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
   facet_grid(attribute~., scales = "free_y", space = "free_y") +
-  theme(legend.position = "none",
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key = element_rect(fill = short_pallete[4]),
+        legend.justification = "center",
+        panel.border = element_rect(colour = "black"),
+        panel.grid = element_blank(),
+        panel.spacing.y = unit(0,"line"),
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
         scale_size(range=c(0.7, 4)) +
-        labs(y = "Nodes", x = "Cluster")
+        labs(y = "Nodes", x = "Cluster")+
+        guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality"))
 dev.off()
 ```
 
@@ -519,6 +533,8 @@ members_3 <- lc$nodeclusters %>%
   filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
+levels(members_3$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
+levels(members_3$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
 svg("analysis/figures/fig05.svg")
 
@@ -527,13 +543,20 @@ ggplot(data = members_3,
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
   facet_grid(attribute~., scales = "free_y", space = "free_y") +
-  theme(legend.position = "none",
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.key = element_rect(fill = short_pallete[4]),
+        legend.justification = "center",
+        panel.border = element_rect(colour = "black"),
+        panel.grid = element_blank(),
+        panel.spacing.y = unit(0,"line"),
         strip.background = element_rect(color = "black", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
         scale_size(range=c(0.7, 3.5)) +
-        labs(y = "Nodes", x = "Cluster")
+        labs(y = "Nodes", x = "Cluster")+
+        guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality"))
 
 dev.off()
 ```
