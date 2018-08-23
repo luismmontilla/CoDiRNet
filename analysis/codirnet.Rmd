@@ -407,22 +407,6 @@ dev.off()
 
 ##7.2. Membership matrices
 
-The following is a global membership matrix. We'll use this as a supplementary figure.
-
-```{r community membership plot}
-svg("analysis/figures/supp_comm_membership.svg")
-#win.metafile(filename="cairo", antialias="default")
-comm.palette <- viridis_pal(option = "viridis")(lc$numbers[3])
-
-plotLinkCommMembers2(lc, nodes = head(names(lc$numclusters), 90),
-                    pal = comm.palette,
-                    total = T, fontsize = 6, sigmafont = 4, comfont = 5,
-                    sumfont = 4,
-                    maxclusters = lc$numbers[3], title = F, nspace = 5)
-dev.off()
-```
-
-
 We can plot now the membership matrices depending of the desired communities properties, e.g. we can study the communities according on their size:
 
 Communities 3, 6, 8, 9, and, 10 are the smallest clusters
@@ -479,10 +463,10 @@ ggplot(data = members_1,
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
         legend.justification = "center",
-        panel.border = element_rect(colour = "black"),
+        panel.border = element_rect(colour = "grey"),
         panel.grid = element_blank(),
         panel.spacing.y = unit(0,"line"),
-        strip.background = element_rect(color = "black", fill = "white"),
+        strip.background = element_rect(color = "grey", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
@@ -514,10 +498,10 @@ ggplot(data = members_2,
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
         legend.justification = "center",
-        panel.border = element_rect(colour = "black"),
+        panel.border = element_rect(colour = "grey"),
         panel.grid = element_blank(),
         panel.spacing.y = unit(0,"line"),
-        strip.background = element_rect(color = "black", fill = "white"),
+        strip.background = element_rect(color = "grey", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
@@ -547,10 +531,10 @@ ggplot(data = members_3,
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
         legend.justification = "center",
-        panel.border = element_rect(colour = "black"),
+        panel.border = element_rect(colour = "grey"),
         panel.grid = element_blank(),
         panel.spacing.y = unit(0,"line"),
-        strip.background = element_rect(color = "black", fill = "white"),
+        strip.background = element_rect(color = "grey", fill = "white"),
         strip.text = element_text(margin = margin(.2, .2, .2, .2, "cm"))) +
         geom_point(aes(x = cluster, y = abb, size = commconn), 
                    color= "white", alpha = 1/2) +
