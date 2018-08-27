@@ -234,7 +234,7 @@ fig01low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
 
 dir.create("analysis/figures/")
 
-svg("analysis/figures/fig01.svg", width = 8)
+pdf("analysis/figures/fig01.pdf")
 
 plot_grid(fig01top, fig01mid, fig01low,  nrow = 3, 
           align = "hv", rel_widths = c(1, 1, 0.1))
@@ -376,16 +376,20 @@ V(comm.graph)$sizes <- comm.sizes$size
 
 
 ```{r fig02-comm similarity graph}
-
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
   geom_edges(aes(color = weight2, size = weight2*10)) +
-  geom_nodes(aes(size = sizes**1.5), color = "black", fill = "black") +
+  geom_nodes(aes(size = sizes**2), color = "black", fill = "black") +
   scale_color_gradient(low = "blue", high = "black") +
   geom_nodetext_repel(aes(label = vertex.names),
-                      nudge_x = c(rep(0.05,8),rep(-0.05,7))) +
+                      nudge_x = c(rep(0.05,8),rep(-0.05,7)),
+                      nudge_y = c(rep(0.05,4),
+                                  rep(-0.05,4),
+                                  rep(-0.05,4),
+                                  rep(0.05,3)
+                                  )) +
   scale_size_continuous(name = "Community\nsize",
-                        breaks = c(4, 9, 17, 24)**1.5,
+                        breaks = c(4, 9, 17, 24)**2,
                         labels = c("4", "9", "17", "24"),
                         guide = guide_legend(override.aes = list(
                           linetype = c(rep(0, 4)))
@@ -396,12 +400,11 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
                          trans = "reverse") + 
   theme_blank()
 
-svg('analysis/figures/fig02.svg')
+pdf('analysis/figures/fig02.pdf')
 
 plot(comm_graph)
 
 dev.off()
-
 ```
 
 
@@ -449,10 +452,11 @@ members_1 <- lc$nodeclusters %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
+
 levels(members_1$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
 levels(members_1$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
-svg("analysis/figures/fig03.svg")
+pdf("analysis/figures/fig03.pdf")
 
 ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -487,7 +491,7 @@ members_2 <- lc$nodeclusters %>%
 levels(members_2$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
 levels(members_2$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
-svg("analysis/figures/fig04.svg")
+pdf("analysis/figures/fig04.pdf")
 
 ggplot(data = members_2, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -520,7 +524,7 @@ members_3 <- lc$nodeclusters %>%
 levels(members_3$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
 levels(members_3$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 
-svg("analysis/figures/fig05.svg")
+pdf("analysis/figures/fig05.pdf")
 
 ggplot(data = members_3, 
        aes(x = cluster, y = abb, fill = cluster)) + 
