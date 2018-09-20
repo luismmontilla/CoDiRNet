@@ -458,7 +458,7 @@ levels(members_1$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C
 
 pdf("analysis/figures/fig03.pdf")
 
-ggplot(data = members_1, 
+p <- ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
@@ -478,7 +478,7 @@ ggplot(data = members_1,
         labs(y = "Nodes", x = "Cluster") +
         guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality")) 
                
-
+print(p)
 dev.off()
 ```
 
@@ -493,7 +493,7 @@ levels(members_2$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C
 
 pdf("analysis/figures/fig04.pdf")
 
-ggplot(data = members_2, 
+g <- ggplot(data = members_2, 
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
@@ -512,6 +512,8 @@ ggplot(data = members_2,
         scale_size(range=c(0.7, 4)) +
         labs(y = "Nodes", x = "Cluster")+
         guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality"))
+
+print(g)
 dev.off()
 ```
 
@@ -526,7 +528,7 @@ levels(members_3$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C
 
 pdf("analysis/figures/fig05.pdf")
 
-ggplot(data = members_3, 
+m <- ggplot(data = members_3, 
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
@@ -546,6 +548,7 @@ ggplot(data = members_3,
         labs(y = "Nodes", x = "Cluster")+
         guides(fill = FALSE, size = guide_legend(nrow = 1, title="Node centrality"))
 
+print(m)
 dev.off()
 ```
 
