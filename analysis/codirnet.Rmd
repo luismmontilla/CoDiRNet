@@ -452,9 +452,9 @@ members_1 <- lc$nodeclusters %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
-
 levels(members_1$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
 levels(members_1$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
+members_1$attribute_s = factor(members_1$attribute, levels=c("Disease", "Genus", "Topic", "Ecoregion"))
 
 pdf("analysis/figures/fig03.pdf")
 
@@ -462,7 +462,7 @@ p <- ggplot(data = members_1,
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
-  facet_grid(attribute ~., scales = 'free_y', space = "free_y") + 
+  facet_grid(attribute_s ~., scales = 'free_y', space = "free_y") + 
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
@@ -488,8 +488,9 @@ members_2 <- lc$nodeclusters %>%
   filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
-levels(members_2$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
+levels(members_2$attribute) <- c("Topic", "Genus", "Disease",  "Ecoregion")
 levels(members_2$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
+members_2$attribute_s = factor(members_2$attribute, levels=c("Disease", "Genus", "Topic", "Ecoregion"))
 
 pdf("analysis/figures/fig04.pdf")
 
@@ -497,7 +498,7 @@ g <- ggplot(data = members_2,
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
-  facet_grid(attribute~., scales = "free_y", space = "free_y") +
+  facet_grid(attribute_s~., scales = "free_y", space = "free_y") +
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
@@ -523,8 +524,9 @@ members_3 <- lc$nodeclusters %>%
   filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
   mutate(attribute = factor(attribute, levels = unique(attribute)),
          abb = factor(abb, levels = sort(unique(abb), decreasing = T)))
-levels(members_3$attribute) <- c("Disease", "Topic", "Ecoregion", "Genus")
+levels(members_3$attribute) <- c("Ecoregion", "Disease", "Topic", "Genus")
 levels(members_3$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
+members_3$attribute_s = factor(members_3$attribute, levels=c("Disease", "Genus", "Topic", "Ecoregion"))
 
 pdf("analysis/figures/fig05.pdf")
 
@@ -532,7 +534,7 @@ m <- ggplot(data = members_3,
        aes(x = cluster, y = abb, fill = cluster)) + 
   geom_tile(color = "white") +
   scale_fill_manual(values = short_pallete[2:7]) +
-  facet_grid(attribute~., scales = "free_y", space = "free_y") +
+  facet_grid(attribute_s~., scales = "free_y", space = "free_y") +
   theme_bw() +
   theme(legend.position = "bottom",
         legend.key = element_rect(fill = short_pallete[4]),
