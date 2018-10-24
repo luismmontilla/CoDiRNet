@@ -134,6 +134,16 @@ is_simple(coral.backbone)
 coral.backbone <- simplify(coral.backbone, remove.multiple = T)
 ```
 
+```{r addition of attributes to backbone}
+coral.att.back <- as.data.frame(names(V(coral.backbone))) %>%
+  left_join(glossary2, by = c("names(V(coral.backbone))" = "node")) %>% 
+  select(2) %>% 
+  use_series(attribute)
+  
+V(coral.backbone)$type <- coral.att.back
+```
+
+
 
 Veamos las propiedades de la red completa
 
@@ -554,6 +564,16 @@ print(m)
 dev.off()
 ```
 
+
+```{r}
+sort(closeness(coral.backbone, 
+          V(coral.backbone)[V(coral.backbone)$type == 'topic']), decreasing = TRUE)
+
+
+cor(closeness(coral.backbone),coral.commconn[,2])
+```
+
+
 #8. External plots
 
 We can use certain functions to export our networks as gephi files
@@ -570,3 +590,7 @@ We can use certain functions to export our networks as gephi files
 #igraph.to.gexf(coral.graph)
 #sink()
 ```
+
+
+
+
