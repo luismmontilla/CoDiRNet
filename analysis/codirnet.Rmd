@@ -14,7 +14,7 @@ library(disparityfilter)
 library(linkcomm)
 library(intergraph)
 #library(GGally)
-library(ggpubr)
+library(tableHTML)
 library(ggrepel)
 library(cowplot)
 library(viridis)
@@ -564,14 +564,29 @@ print(m)
 dev.off()
 ```
 
+```{r topics excluded from backbone}
+#excl.objectives <- 
+  topics[!(
+  topics %in% V(coral.backbone)$name[V(coral.backbone)$type == 'topic']
+  )] %>% 
+  data.frame() %>% 
+  tableHTML(rownames = FALSE, 
+            border = 0, 
+            theme = 'scientific', 
+            caption = 'Supplementary table: Research questions excluded from the backbone extraction') %>% 
+  write_tableHTML(file = 'supplementary/excluded_questions.html')
+```
 
-```{r}
+
+```{r closeness centrality}
 sort(closeness(coral.backbone, 
           V(coral.backbone)[V(coral.backbone)$type == 'topic']), decreasing = TRUE)
 
 
 cor(closeness(coral.backbone),coral.commconn[,2])
 ```
+
+
 
 
 #8. External plots
