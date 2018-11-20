@@ -13,7 +13,7 @@ library(igraph)
 library(disparityfilter)
 library(linkcomm)
 library(intergraph)
-#library(GGally)
+library(magrittr)
 library(tableHTML)
 library(ggrepel)
 library(cowplot)
@@ -62,7 +62,7 @@ coral.att <- data.frame(lapply(coral.att, function(x) {
   ), stringsAsFactors = F)
 ```
 
-coral.merge and coral.edges take the raw data file and transform it into a list of edges
+coral.merge and coral.edges take the raw data file and transform it into a list of edges.
 
 ```{r Edge list}
 coral.merge <- cmbDFrame(rawnet[,-(1:4)])
@@ -143,9 +143,6 @@ coral.att.back <- as.data.frame(names(V(coral.backbone))) %>%
 V(coral.backbone)$type <- coral.att.back
 ```
 
-
-
-Veamos las propiedades de la red completa
 
 #3. Network properties
 
@@ -565,16 +562,13 @@ dev.off()
 ```
 
 ```{r topics excluded from backbone}
-#excl.objectives <- 
   topics[!(
   topics %in% V(coral.backbone)$name[V(coral.backbone)$type == 'topic']
   )] %>% 
-  data.frame() %>% 
-  tableHTML(rownames = FALSE, 
-            border = 0, 
-            theme = 'scientific', 
-            caption = 'Supplementary table: Research questions excluded from the backbone extraction') %>% 
-  write_tableHTML(file = 'supplementary/excluded_questions.html')
+  data.frame() %>%
+  rename('excluded_topics_(supp2.csv)' = '.') %>% 
+  write.csv('supplementary/supp2_excluded_topics.csv', 
+            row.names = FALSE)
 ```
 
 
