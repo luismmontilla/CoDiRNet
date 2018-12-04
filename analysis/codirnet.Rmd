@@ -21,27 +21,27 @@ library(viridis)
 library(ggnetwork)
 library(vegan)
 library(dplyr)
-library(strigr)
+library(stringr)
 library(stringi)
 source("R/cmbDFrame.R")
 source("R/backbone2.R")
-#source("CVsplit.R")
 source("R/strenght_distribution.R")
 source("R/getMaxden.R")
 source("R/plotLinkCommMembers2.R")
 source("R/plotLinkCommGraph2.R")
 #rcomm_exx
-source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/rcomm_exx.R?token=ANC4vCmHL9P-K8CpslgXX03hOzh_fT1Tks5bXyJtwA%3D%3D"))
+source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/exx_calculation.R"))
 #xy_subsets
-source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/xy_subsets.R?token=ANC4vOheNymI7sU3IkjghOpvMAXk_vHgks5bXyRUwA%3D%3D'))
-#new_exy_calculation.R
-source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/new_exy_calculation.R?token=ANC4vMi0Xiitu_JIHBrnTogYxU6zlRWOks5bXynrwA%3D%3D"))
-#load permutational community assortativity
-source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/Permutational_community_assortativity.R?token=ANC4vCCSGbAfbmz5FjtwlSppKXaLBaqRks5bXyorwA%3D%3D'))
-# rcomm_exx
-source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/rcomm_exx.R?token=ANC4vBY60iLlFOWDk9udRWSYcNtuclz4ks5bW4AkwA%3D%3D'))
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/xy_subsets.R'))
+#rcomm_exy
+source(url("https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/exy_calculation.R"))
 #adj_to_edgelist
-source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/adj_to_edgelist.R?token=ANC4vFm_KUe0WpVjILXOtMMFAj2gPfpcks5bYdUdwA%3D%3D'))
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/adj_to_edgelist.R'))
+#permutational community assortativity
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/Permutational_community_assortativity.R'))
+#getNetworkCommunities
+source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/getNetworkCommunities.R'))
+
 ```
 
 ```{r Data}
