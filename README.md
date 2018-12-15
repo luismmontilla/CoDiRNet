@@ -1,4 +1,6 @@
-# CoDiRNet: Coral disease research network.
+# CoDiRNet: Coral disease research network [![DOI](https://zenodo.org/badge/133414419.svg)](https://zenodo.org/badge/latestdoi/133414419)
+
+
 
 This is the research compendium for the CoDiRNet project. An analysis of the trends in coral disease research using complex networks.
 
