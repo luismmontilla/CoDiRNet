@@ -119,6 +119,10 @@ for (i in 1:nrow(coral.att)) {
 }
 
 V(coral.graph)$type <- glossary2$attribute
+
+write.csv(glossary2[order(glossary2$attribute, glossary2$node),],
+          'supplementary/supp3_topic_list.csv',
+          row.names = FALSE)
 ```
 
 We perform our analysis over a reduced form of the network that retains the overall properties of the original graph *sensu* [Ahn et al. (2011)](https://www.nature.com/articles/srep00196)
