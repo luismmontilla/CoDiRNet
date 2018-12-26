@@ -23,6 +23,8 @@ library(vegan)
 library(dplyr)
 library(stringr)
 library(stringi)
+library(DiagrammeR)
+library(DiagrammeRsvg)
 source("R/cmbDFrame.R")
 source("R/backbone2.R")
 source("R/strenght_distribution.R")
@@ -43,6 +45,59 @@ source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity
 source(url('https://raw.githubusercontent.com/alspeed09/OverlapCommAssortativity/master/R/getNetworkCommunities.R'))
 
 ```
+
+# yellow + black + white + dark + growth + trematode + ciliate + aspergillosis
+#google scholar: 602 + 1230 + 448 + 854 +308 + 469 + 743 + 2030 = 6684
+#dimensions: 69 + 178 + 280 + 33 + 44 + 30 + 6 + 65 = 705
+#meta 42 + 102 + (83 + 18 + 58) +24 + 173 + 136 + 26 + 29 = 691
+#peerus
+
+```{r fig01-prisma statement}
+
+dir.create("analysis/figures/")
+
+prisma_diagram <- grViz('
+
+  digraph codirnet_prisma {
+
+node [shape = box]
+
+A [label = "Records identified through\ndatabase searching\nGoogle Scholar: n = 6684"];
+B [label = "Records identified through\ndatabase searching\nDimensions: n = 705"];
+C [label = "Records identified through\ndatabase searching\nMeta: n = 691"];
+D [label = "Records identified through\ndatabase searching\nPeerus: n = 12"];
+E [label = "Additional records identified though\nother sources\nWork & Meteyer (2014) : n = 492"]; 
+F [label = "Records after duplicates removed\nn = 750"]; 
+G [label = "Records screened\nn = 750"];
+H [label = "Records excluded\nn = 29"]; 
+I [label = "Full-text articles assessed\nfor eligibility\nn = 721"];
+J [label = "Full-text articles excluded because\nthey were responses to other articles\nn = 2"];
+K [label = "Studies included in quantitative\nsynthesis\n(network analysis) n = 719"]
+
+
+
+  {A; B; C; D; E} -> F;
+  F -> G
+  G -> H;  
+  G -> I
+  I -> J
+  I -> K
+
+{rank = same; A; B; C; D; E;}
+{rank = same; H; G;}
+{rank = same; J; I;}
+
+graph [splines=ortho]
+  
+}
+')
+
+prisma_diagram %>% 
+  export_svg %>% 
+  charToRaw %>% 
+  rsvg_svg("analysis/figures/fig01.svg")
+```
+
 
 ```{r Data}
 rawnet <- read.csv("data/master_codirnet.csv", sep = ",",
@@ -236,18 +291,16 @@ plot_topic <- ggplot(sd_topic, aes(sd_topic$c)) +
 
 We can compose the previous distributions in a single plot
 
-```{r fig01-composed plot}
-fig01top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
+```{r fig02-composed plot}
+fig03top <- plot_grid(plot_all, plot_disease, labels = c("A", "B"), ncol = 2)
 
-fig01mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
+fig03mid <- plot_grid(plot_ecoregion, plot_genera, labels = c("C", "D"), ncol = 2)
 
-fig01low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
+fig03low <- plot_grid(plot_topic, labels = c("E"), ncol = 1)
 
-dir.create("analysis/figures/")
+pdf("analysis/figures/fig03.pdf")
 
-pdf("analysis/figures/fig01.pdf")
-
-plot_grid(fig01top, fig01mid, fig01low,  nrow = 3, 
+plot_grid(fig03top, fig03mid, fig03low,  nrow = 3, 
           align = "hv", rel_widths = c(1, 1, 0.1))
 
 dev.off()
@@ -386,7 +439,7 @@ V(comm.graph)$sizes <- comm.sizes$size
 ```
 
 
-```{r fig02-comm similarity graph}
+```{r fig04-comm similarity graph}
 comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
        aes(x, y, xend = xend, yend = yend)) +
   geom_edges(aes(color = weight2, size = weight2*10)) +
@@ -411,7 +464,7 @@ comm_graph <- ggplot(data = ggnetwork(comm.graph, layout = "circle"),
                          trans = "reverse") + 
   theme_blank()
 
-pdf('analysis/figures/fig02.pdf')
+pdf('analysis/figures/fig04.pdf')
 
 plot(comm_graph)
 
@@ -457,7 +510,7 @@ short_pallete <- viridis_pal(option = "viridis")(7) #we added an extra color to 
 ```
 
 
-```{r fig03-small communities}
+```{r fig05-small communities}
 members_1 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(3, 6, 8, 9, 10)) %>% 
@@ -467,7 +520,7 @@ levels(members_1$attribute) <- c("Disease", "Objective", "Ecoregion", "Genus")
 levels(members_1$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 members_1$attribute_s = factor(members_1$attribute, levels=c("Disease", "Genus", "Objective", "Ecoregion"))
 
-pdf("analysis/figures/fig03.pdf")
+pdf("analysis/figures/fig05.pdf")
 
 p <- ggplot(data = members_1, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -493,7 +546,7 @@ print(p)
 dev.off()
 ```
 
-```{r fig04-medium-sized communities}
+```{r fig06-medium-sized communities}
 members_2 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(1, 7, 11, 13, 15)) %>% 
@@ -503,7 +556,7 @@ levels(members_2$attribute) <- c("Objective", "Genus", "Disease",  "Ecoregion")
 levels(members_2$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 members_2$attribute_s = factor(members_2$attribute, levels=c("Disease", "Genus", "Objective", "Ecoregion"))
 
-pdf("analysis/figures/fig04.pdf")
+pdf("analysis/figures/fig06.pdf")
 
 g <- ggplot(data = members_2, 
        aes(x = cluster, y = abb, fill = cluster)) + 
@@ -529,7 +582,7 @@ print(g)
 dev.off()
 ```
 
-```{r fig05-large communities}
+```{r fig07-large communities}
 members_3 <- lc$nodeclusters %>%
   left_join(coral.att, by = 'node') %>%
   filter(cluster %in% c(2, 4, 5, 12, 14)) %>% 
@@ -539,7 +592,7 @@ levels(members_3$attribute) <- c("Ecoregion", "Disease", "Objective", "Genus")
 levels(members_3$cluster) <- c("C1", "C2", "C3", "C4", "C5","C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14", "C15")
 members_3$attribute_s = factor(members_3$attribute, levels=c("Disease", "Genus", "Objective", "Ecoregion"))
 
-pdf("analysis/figures/fig05.pdf")
+pdf("analysis/figures/fig07.pdf")
 
 m <- ggplot(data = members_3, 
        aes(x = cluster, y = abb, fill = cluster)) + 
