@@ -176,7 +176,7 @@ for (i in 1:nrow(coral.att)) {
 V(coral.graph)$type <- glossary2$attribute
 
 write.csv(glossary2[order(glossary2$attribute, glossary2$node),],
-          'supplementary/supp3_topic_list.csv',
+          'supplementary/supp2_topic_list.csv',
           row.names = FALSE)
 ```
 
@@ -618,13 +618,15 @@ print(m)
 dev.off()
 ```
 
+#8. 
+
 ```{r topics excluded from backbone}
   topics[!(
   topics %in% V(coral.backbone)$name[V(coral.backbone)$type == 'topic']
   )] %>% 
   data.frame() %>%
-  rename('excluded_topics_(supp2.csv)' = '.') %>% 
-  write.csv('supplementary/supp2_excluded_topics.csv', 
+  rename('excluded_topics_(supp3.csv)' = '.') %>% 
+  write.csv('supplementary/supp3_excluded_topics.csv', 
             row.names = FALSE)
 ```
 
@@ -640,7 +642,7 @@ cor(closeness(coral.backbone),coral.commconn[,2])
 
 
 
-#8. External plots
+#9. External plots
 
 We can use certain functions to export our networks as gephi files
 
