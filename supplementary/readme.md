@@ -8,4 +8,4 @@
 
 3. [List of extracted topics (supp3_topic_list.csv)](https://raw.githubusercontent.com/luismmontilla/CoDiRNet/master/supplementary/supp3_topic_list.csv) This was generated using the main analysis file.
 
-4. [Adjacency table of objectives and diseases (supp4_adjacency_topics_diseases.csv)]() This was generated using the main analysis file.
+4. [Adjacency table of objectives and diseases (supp4_adjacency_topics_diseases.csv)](https://raw.githubusercontent.com/luismmontilla/CoDiRNet/master/supplementary/supp4_adjacency_topics_diseases.csv) This was generated using the main analysis file.
