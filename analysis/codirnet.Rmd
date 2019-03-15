@@ -180,6 +180,19 @@ write.csv(glossary2[order(glossary2$attribute, glossary2$node),],
           row.names = FALSE)
 ```
 
+```{r comparison edges between topics and diseases}
+Disease_Topics <- as.matrix(as_adj(coral.graph))
+
+Disease_Topics <- Disease_Topics[
+  rownames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "disease"],
+  colnames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "topic"]
+  ]
+
+write.csv(Disease_Topics, "supplementary/supp4_adjacency_topics_diseases.csv", row.names = T)
+
+```
+
+
 We perform our analysis over a reduced form of the network that retains the overall properties of the original graph *sensu* [Ahn et al. (2011)](https://www.nature.com/articles/srep00196)
 
 ```{r Backbone network}
