@@ -180,18 +180,6 @@ write.csv(glossary2[order(glossary2$attribute, glossary2$node),],
           row.names = FALSE)
 ```
 
-```{r comparison edges between topics and diseases}
-Disease_Topics <- as.matrix(as_adj(coral.graph))
-
-Disease_Topics <- Disease_Topics[
-  rownames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "disease"],
-  colnames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "topic"]
-  ]
-
-write.csv(Disease_Topics, "supplementary/supp4_adjacency_topics_diseases.csv", row.names = T)
-
-```
-
 
 We perform our analysis over a reduced form of the network that retains the overall properties of the original graph *sensu* [Ahn et al. (2011)](https://www.nature.com/articles/srep00196)
 
@@ -631,7 +619,9 @@ print(m)
 dev.off()
 ```
 
-#8. 
+#8. Potential gaps
+
+We can infer gaps in the field by exploring unconnected or weakly connected topics
 
 ```{r topics excluded from backbone}
   topics[!(
@@ -643,6 +633,18 @@ dev.off()
             row.names = FALSE)
 ```
 
+```{r comparison edges between topics and diseases}
+Disease_Topics <- as.matrix(as_adjacency_matrix(coral.graph))
+
+Disease_Topics <- Disease_Topics[
+  rownames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "disease"],
+  colnames(Disease_Topics) %in% coral.att$node[coral.att$attribute == "topic"]
+  ]
+
+write.csv(Disease_Topics, "supplementary/supp4_adjacency_topics_diseases.csv", 
+          row.names = T)
+
+```
 
 ```{r closeness centrality}
 sort(closeness(coral.backbone, 
