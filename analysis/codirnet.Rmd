@@ -58,18 +58,15 @@ dir.create("analysis/figures/")
 
 prisma_diagram <- grViz('
 
-digraph codirnet_prisma {
+  digraph codirnet_prisma {
 
 node [shape = box]
 
-X [label = "Records identified through\ndatabase searching"]
-Y [label = "Additional records identified though\nother sources"]
-
-A [label = "Google Scholar:\nn = 6684"];
-B [label = "Dimensions:\nn = 705"];
-C [label = "Meta:\nn = 691"];
-D [label = "Peerus:\nn = 12"];
-E [label = "Work & Meteyer (2014):\nn = 492"]; 
+A [label = "Records identified through\ndatabase searching\nGoogle Scholar: n = 6684"];
+B [label = "Records identified through\ndatabase searching\nDimensions: n = 705"];
+C [label = "Records identified through\ndatabase searching\nMeta: n = 691"];
+D [label = "Records identified through\ndatabase searching\nPeerus: n = 12"];
+E [label = "Additional records identified though\nother sources\nWork & Meteyer (2014) : n = 492"]; 
 F [label = "Records after duplicates removed\nn = 750"]; 
 G [label = "Records screened\nn = 750"];
 H [label = "Records excluded\nn = 29"]; 
@@ -77,24 +74,19 @@ I [label = "Full-text articles assessed\nfor eligibility\nn = 721"];
 J [label = "Full-text articles excluded because\nthey were responses to other articles\nn = 2"];
 K [label = "Studies included in quantitative\nsynthesis\n(network analysis) n = 719"]
 
-d1 [shape=point,width=0.01,height=0.01];
-d2 [shape=point,width=0.01,height=0.01];
 
-  X -> d2 [dir=none]
-  d2 -> {A; B; C; D}
-  Y -> E
-  {A; B; C; D; E} -> d1 [dir=none];
-  d1 -> F
-  F -> G
-  G -> H;  
-  G -> I
-  I -> J
-  I -> K
+
+
+  {A; B; C; D; E} -> F;
+  F -> G;
+  G -> H;
+  G -> I;
+  I -> J;
+  I -> K;
 
 {rank = same; A; B; C; D; E;}
 {rank = same; H; G;}
 {rank = same; J; I;}
-{rank = same; X; Y;}
 
 graph [splines=ortho]
   
